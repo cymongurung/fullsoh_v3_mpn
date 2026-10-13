@@ -16,6 +16,7 @@
     <button class="nav" data-page="upload">⇧ <span>Upload Data</span></button>
     <button class="nav" data-page="qr">▦ <span>QR Code Maker</span></button>
     <button class="nav" data-page="status">▣ <span>Data Status</span></button>
+    <button class="nav" data-page="urlcopy">⧉ <span>URL Copy</span></button>
   </aside>
 
   <div class="backdrop" id="backdrop"></div>
@@ -103,6 +104,21 @@
       <div class="panel">
         <h2>Current Inventory</h2>
         <div class="status-grid" id="statusGrid"></div>
+      </div>
+    </section>
+
+    <section class="page" id="urlcopyPage">
+      <div class="panel">
+        <h2>URL Copy</h2>
+        <p>Paste a product link from the website. The app will find the code for you.</p>
+        <textarea id="urlInput" class="qr-input" rows="3" placeholder="Paste website link here"></textarea>
+        <button class="primary big" id="urlFind">Find Code</button>
+        <div id="urlResult" class="url-result hidden">
+          <small>Code found</small>
+          <strong id="urlCode"></strong>
+          <button class="primary big" id="urlGo">Go to Scan Barcode</button>
+        </div>
+        <div id="urlMessage" class="message hidden"></div>
       </div>
     </section>
   </main>

@@ -102,3 +102,8 @@ table{width:100%;border-collapse:collapse;min-width:720px;background:#fff}th,td{
 /* Product ID link to website */
 .deal-link{color:#1d4ed8;text-decoration:underline;text-underline-offset:3px}
 .deal-link:active{color:#1e3a8a}
+
+/* URL Copy */
+.url-result{margin-top:18px;padding:16px;background:var(--soft);border:1px solid var(--line);border-radius:12px;text-align:center}
+.url-result small{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.6px}
+.url-result strong{display:block;font-size:24px;margin:6px 0 14px;word-break:break-all}

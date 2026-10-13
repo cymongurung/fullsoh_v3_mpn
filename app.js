@@ -491,7 +491,7 @@ function showPage(page){
   document.querySelectorAll(".nav").forEach(n=>n.classList.remove("active"));
   $(`${page}Page`).classList.add("active");
   document.querySelector(`.nav[data-page="${page}"]`).classList.add("active");
-  $("pageTitle").textContent = page==="scanner" ? "Stock Scanner" : page==="upload" ? "Upload Data" : page==="qr" ? "QR Code Maker" : "Data Status";
+  $("pageTitle").textContent = page==="scanner" ? "Stock Scanner" : page==="upload" ? "Upload Data" : page==="qr" ? "QR Code Maker" : page==="urlcopy" ? "URL Copy" : "Data Status";
   if(page==="status") renderStatus();
   $("sidebar").classList.remove("open"); $("backdrop").classList.remove("show");
 }
@@ -624,5 +624,62 @@ async function qrSave(){
 $("qrMake").addEventListener("click", qrMake);
 $("qrCancel").addEventListener("click", qrCancel);
 $("qrSave").addEventListener("click", qrSave);
+
+// ---------- URL Copy: find the code from a website link ----------
+// After you set up the helper (see worker.js), paste its address here. Leave "" to use links that contain the code only.
+const MPN_LOOKUP_URL = "";
+let foundCode = "";
+
+function mpnFromLink(text){
+  const t = clean(text);
+  if(/^\d{8,15}$/.test(t)) return t;
+  try{
+    const last = new URL(t).pathname.split("/").filter(Boolean).pop() || "";
+    const m = last.match(/^(\d{8,15})\.html?$/i);
+    if(m) return m[1];
+  }catch(e){}
+  return "";
+}
+
+function urlMsg(text, type){
+  const m = $("urlMessage"); m.textContent = text;
+  m.className = "message" + (type === "error" ? " error" : "");
+}
+
+async function urlFind(){
+  const link = clean($("urlInput").value);
+  $("urlResult").classList.add("hidden"); $("urlMessage").classList.add("hidden");
+  if(!link){ toast("Paste the website link first"); return; }
+
+  let code = mpnFromLink(link);
+  if(!code){
+    if(!MPN_LOOKUP_URL){ urlMsg("The code is not inside this link, and the lookup helper is not set up yet.", "error"); return; }
+    urlMsg("Looking up code…");
+    try{
+      const res = await fetch(MPN_LOOKUP_URL + "?u=" + encodeURIComponent(link));
+      const data = await res.json();
+      if(!res.ok || !data.mpn) throw new Error(data.error || "Code not found");
+      code = data.mpn;
+    }catch(e){
+      urlMsg("Could not find the code: " + e.message, "error"); return;
+    }
+  }
+  foundCode = code;
+  $("urlCode").textContent = code;
+  $("urlMessage").classList.add("hidden");
+  $("urlResult").classList.remove("hidden");
+}
+
+function urlGo(){
+  if(!foundCode) return;
+  if(navigator.clipboard) navigator.clipboard.writeText(foundCode).catch(()=>{});
+  showPage("scanner");
+  $("searchInput").value = foundCode;
+  search();
+  $("searchInput").focus();
+}
+
+$("urlFind").addEventListener("click", urlFind);
+$("urlGo").addEventListener("click", urlGo);
 
 loadInitial();
